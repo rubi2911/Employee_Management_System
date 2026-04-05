@@ -126,3 +126,17 @@
 ::selection {
     @apply bg-indigo-100 text-indigo-900;
 }
+
+
+
+
+/* Hide default browser eye icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-password-toggle-button {
+  display: none;
+}
