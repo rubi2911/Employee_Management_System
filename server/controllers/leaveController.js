@@ -1,5 +1,5 @@
 import Employee from "../models/Employee.js";
-import LeaveApplication from "../models/LeaveApplication";
+import LeaveApplication from "../models/LeaveApplication.js";
 
 
 // Create leave
@@ -51,7 +51,7 @@ export const createLeave = async (requestAnimationFrame, res) => {
 
 // Get leaves
 // GET /api/leaves
-export const getLeave = async (requestAnimationFrame, res) => {
+export const getLeaves = async (requestAnimationFrame, res) => {
     try {
         const session = req.session;
         const isAdmin = session.role === "ADMIN"
