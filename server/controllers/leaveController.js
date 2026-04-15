@@ -1,3 +1,4 @@
+import { inngest } from "../inngest/index.js";
 import Employee from "../models/Employee.js";
 import LeaveApplication from "../models/LeaveApplication.js";
 
@@ -40,6 +41,13 @@ export const createLeave = async (requestAnimationFrame, res) => {
             status: "PENDING"
         })
 
+        await inngest.send({
+            name: "leave/pending",
+            data: {
+                LeaveApplicationId: LeaveApplication._id
+            }
+        })
+
         return res.json({ success: true, data: leave });
 
     } catch (error) {
@@ -69,8 +77,8 @@ export const getLeaves = async (requestAnimationFrame, res) => {
                     employeeId: obj.employeeId?._id?.toString(),
                 }
             })
-            return res.json({data})
-        }else{
+            return res.json({ data })
+        } else {
             const employee = await Employee.findOne({
                 userId: session.userId
             }).lean();
@@ -78,12 +86,12 @@ export const getLeaves = async (requestAnimationFrame, res) => {
             if (!employee) return res.status(404).json({ error: "Not found" });
 
             const leaves = await LeaveApplication.find({
-                employeeId:employee._id
+                employeeId: employee._id
             }).sort({ createAt: -1 });
-return res.json ({
-    data: leaves,
-    employee:{...employee, id:employee._id.toString()}
-})
+            return res.json({
+                data: leaves,
+                employee: { ...employee, id: employee._id.toString() }
+            })
         }
 
     } catch (error) {
@@ -96,14 +104,14 @@ return res.json ({
 // Update leave status
 // PATCH /api/leaves/:id
 export const updateLeaveStatus = async (requestAnimationFrame, res) => {
-try {
-        const {status}= req.body;
-        if(!["APPROVED","REJECTED","PENDING"].includes(status)){
+    try {
+        const { status } = req.body;
+        if (!["APPROVED", "REJECTED", "PENDING"].includes(status)) {
             return res.status(400).json({ error: "Invalid status" });
         }
-        const leave =await LeaveApplication.findByIdAndUpdate(req.params.id, {status},{returnDocument: "after"})
+        const leave = await LeaveApplication.findByIdAndUpdate(req.params.id, { status }, { returnDocument: "after" })
 
-        return res.json({success:true,data:leave})
+        return res.json({ success: true, data: leave })
 
     } catch (error) {
         return res.status(500).json({ error: "Failed" });
