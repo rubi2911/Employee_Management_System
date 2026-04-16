@@ -37,25 +37,25 @@ export const getDashboard = async (req, res) => {
             if (!employee) return res.status(404).json({ error: "Employee not found" });
 
             const today = new Date();
-            const [currentMontAttendance, pendingLeaves, latestPayslip]=await Promise.all([
+            const [currentMontAttendance, pendingLeaves, latestPayslip] = await Promise.all([
                 Attendance.countDocuments({
                     employeeId: employee._id,
                     date: {
-                        $gte: new Date(today.getFullYear(),today.getMonth(),1),
-                        $lt: new Date(today.getFullYear(),today.getMonth()+1 ,1)
+                        $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+                        $lt: new Date(today.getFullYear(), today.getMonth() + 1, 1)
                     }
                 }).LeaveApplication.countDocuments({
                     employeeId: employee._id,
-                    status:"PENDING",
+                    status: "PENDING",
                 }),
-                Payslip.findOne({employeeId: employee._id}).sort({createdAt: -1}).lean(),
+                Payslip.findOne({ employeeId: employee._id }).sort({ createdAt: -1 }).lean(),
             ])
             return res.json({
-                role:"EMPLOYEE",
-                employee: {...employee, id:employee._id.toString()},
+                role: "EMPLOYEE",
+                employee: { ...employee, id: employee._id.toString() },
                 currentMontAttendance,
                 pendingLeaves,
-                latestPayslip: latestPayslip ?{...latestPayslip, id:latestPayslip._id.toString()} : null
+                latestPayslip: latestPayslip ? { ...latestPayslip, id: latestPayslip._id.toString() } : null
             })
         }
     } catch (error) {

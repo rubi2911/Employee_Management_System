@@ -4,7 +4,7 @@ import "dotenv/config"
 import multer from "multer";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
-import employeesRouter from "./routes/EmployeeRoutes.js";
+import employeesRouter from "./routes/employeeRoutes.js";
 import profileRouter from "./routes/profileRoutes.js";
 import attendanceRouter from "./routes/attendanceRoutes.js";
 import leaveRouter from "./routes/leaveRoutes.js";

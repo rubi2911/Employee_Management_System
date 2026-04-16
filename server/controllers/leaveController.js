@@ -5,7 +5,7 @@ import LeaveApplication from "../models/LeaveApplication.js";
 
 // Create leave
 // POST /api/leaves
-export const createLeave = async (requestAnimationFrame, res) => {
+export const createLeave = async (req, res) => {
     try {
         const session = req.session;
         const employee = await Employee.findOne({ userId: session.userId })
@@ -32,7 +32,7 @@ export const createLeave = async (requestAnimationFrame, res) => {
             return res.status(400).json({ error: "End date cannot be before start date" });
         }
 
-        const leave = await LeaveApplication({
+        const leave = await LeaveApplication.create({
             employeeId: employee._id,
             type,
             startDate: new Date(startDate),
@@ -44,7 +44,7 @@ export const createLeave = async (requestAnimationFrame, res) => {
         await inngest.send({
             name: "leave/pending",
             data: {
-                LeaveApplicationId: LeaveApplication._id
+                LeaveApplicationId: leave._id
             }
         })
 
@@ -59,7 +59,7 @@ export const createLeave = async (requestAnimationFrame, res) => {
 
 // Get leaves
 // GET /api/leaves
-export const getLeaves = async (requestAnimationFrame, res) => {
+export const getLeaves = async (req, res) => {
     try {
         const session = req.session;
         const isAdmin = session.role === "ADMIN"
@@ -67,7 +67,7 @@ export const getLeaves = async (requestAnimationFrame, res) => {
             const status = req.query.status;
             const where = status ? { status } : {}
 
-            const leaves = (await LeaveApplication.find(where).populate("employeeId")).sort({ createAt: -1 });
+            const leaves = (await LeaveApplication.find(where).populate("employeeId")).sort({ createdAt: -1 });
             const data = leaves.map((l) => {
                 const obj = l.toObject();
                 return {
@@ -87,7 +87,7 @@ export const getLeaves = async (requestAnimationFrame, res) => {
 
             const leaves = await LeaveApplication.find({
                 employeeId: employee._id
-            }).sort({ createAt: -1 });
+            }).sort({ createdAt: -1 });
             return res.json({
                 data: leaves,
                 employee: { ...employee, id: employee._id.toString() }
@@ -103,7 +103,7 @@ export const getLeaves = async (requestAnimationFrame, res) => {
 
 // Update leave status
 // PATCH /api/leaves/:id
-export const updateLeaveStatus = async (requestAnimationFrame, res) => {
+export const updateLeaveStatus = async (req, res) => {
     try {
         const { status } = req.body;
         if (!["APPROVED", "REJECTED", "PENDING"].includes(status)) {
