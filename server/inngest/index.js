@@ -122,7 +122,7 @@ const attendanceReminderCron = inngest.createFunction(
     const today = await step.run("get-today-date", () => {
       const startUTC = new Date(
         new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" }) +
-          "T00:00:00 +05:30",
+          "T00:00:00+05:30",
       );
       const endUTC = new Date(startUTC.getTime() + 24 * 60 * 60 * 1000);
       return {
@@ -186,7 +186,7 @@ const attendanceReminderCron = inngest.createFunction(
               We noticed you haven't marked your attendance yet today.
             </p>
             <p style="font-size: 16px;">
-              The deadline was <stong>11:30 AM </strong> and your attendance is still missing.
+              The deadline was <strong>11:30 AM </strong> and your attendance is still missing.
             </p>
             <p style="font-size: 16px;">
               Please check in as soon as possible or contact your admin if you're facing any issues.
@@ -201,10 +201,10 @@ const attendanceReminderCron = inngest.createFunction(
             </div>`,
       })
         });
+        await Promise.all(emailPromises)
       });
     }
 
-    await Promise.all(emailPromises)
 
     return {
       totalActive: activeEmployees.length,
