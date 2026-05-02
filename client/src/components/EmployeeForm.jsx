@@ -23,7 +23,7 @@ const EmployeeForm = ({ initialData, onSuccess, onCancel }) => {
       const method = isEditMode ? "put" : "post";
       await api[method](url, formData)
       onSuccess ? onSuccess() : navigate("/employees")
-    } catch (error) {
+    } catch (err) {
       toast.error(err.response?.data?.error || err.message);
     }finally{
       setLoading(false);
