@@ -1,6 +1,7 @@
 import { CalendarDays, FileText, Loader2, Loader2Icon, Send, X } from "lucide-react";
 import React, { useState } from "react";
 import api from "../../api/axios";
+import toast from "react-hot-toast";
 
 const ApplyLeaveModal = ({ open, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
